@@ -1,5 +1,5 @@
 LDLIBS=-lglut  -lGLEW -lGL -lm
-all: pingpong
+all: bingbong
 clean:
-	rm -f *.o pingpong
+	rm -f *.o bingbong
 .PHONY: all clean
