@@ -1,5 +1,4 @@
 /* 
- * File:   pingpong.c
  * Author: tapin13
  *
  * Created on May 2, 2017, 11:26 AM
@@ -115,43 +114,16 @@ void gameOver() {
     glEnd();
     
     glutSwapBuffers();
+    
+    sleep(1);
 }
 
-void onDisplay() {
+void updateGame() {
     if(gameBall.lives == 0) {
         gameOver();
-        return;
+        glutLeaveMainLoop();
     }
-    
-    glClearColor(1.0, 1.0, 1.0, 1.0);
-    glClear(GL_COLOR_BUFFER_BIT);
-    
-    glColor3d(0.0, 0.0, 0.0);
 
-    
-    
-    glBegin(GL_LINE_STRIP);
-        glVertex2f(-0.99, -0.99);
-        glVertex2f(-0.99, 0.99);
-        glVertex2f(0.99, 0.99);
-        glVertex2f(0.99, -0.99);
-        glVertex2f(-0.99, -0.99);
-    glEnd();
-    
-    glPushMatrix();
-
-    glTranslatef(0.0, bat.position, 0.0);
-    
-    glBegin(GL_LINE_STRIP);
-        glVertex2f(bat.left_buttom.x   , bat.left_buttom.y);
-        glVertex2f(bat.left_top.x      , bat.left_top.y);
-        glVertex2f(bat.right_top.x     , bat.right_top.y);
-        glVertex2f(bat.right_buttom.x  , bat.right_buttom.y);
-        glVertex2f(bat.left_buttom.x   , bat.left_buttom.y);
-    glEnd();
-
-    glPopMatrix();
-    
     // Ball hit the wall
     if(gameBall.x > (1.0 - gameBall.radius)) { // || gameBall.x < (-1.0 + gameBall.radius)
         gameBall.step_x *= -1;
@@ -182,11 +154,59 @@ void onDisplay() {
         gameBall.step_x *= -1;
         
         // speed up the ball
-        gameBall.step_x += 0.005;
-        gameBall.step_y += 0.005;
+        gameBall.step_x += 0.001;
+        gameBall.step_y += 0.001;
         
         score++;
     }
+
+    gameBall.x += gameBall.step_x;
+    gameBall.y += gameBall.step_y;
+    
+    glutPostRedisplay();
+}
+
+int frame=0,time,timebase=0;
+
+void displayGame() {
+    /*
+    frame++;
+    time=glutGet(GLUT_ELAPSED_TIME);
+    if (time - timebase > 1000) {
+        printf("FPS:%4.2f\n",
+        frame*1000.0/(time-timebase));
+        timebase = time;
+        frame = 0;
+    }
+    */
+    
+    glClearColor(1.0, 1.0, 1.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    
+    glColor3d(0.0, 0.0, 0.0);
+
+    glBegin(GL_LINE_STRIP);
+        glVertex2f(-0.99, -0.99);
+        glVertex2f(-0.99, 0.99);
+        glVertex2f(0.99, 0.99);
+        glVertex2f(0.99, -0.99);
+        glVertex2f(-0.99, -0.99);
+    glEnd();
+    
+    glPushMatrix();
+
+    glTranslatef(0.0, bat.position, 0.0);
+    
+    glBegin(GL_LINE_STRIP);
+        glVertex2f(bat.left_buttom.x   , bat.left_buttom.y);
+        glVertex2f(bat.left_top.x      , bat.left_top.y);
+        glVertex2f(bat.right_top.x     , bat.right_top.y);
+        glVertex2f(bat.right_buttom.x  , bat.right_buttom.y);
+        glVertex2f(bat.left_buttom.x   , bat.left_buttom.y);
+    glEnd();
+
+    glPopMatrix();
+    
 
     // Draw ball
     
@@ -198,9 +218,6 @@ void onDisplay() {
     glEnd();
 
     glColor3d(0.0, 0.0, 0.0);
-    
-    gameBall.x += gameBall.step_x;
-    gameBall.y += gameBall.step_y;
     
     glPushMatrix();
     glTranslatef(gameBall.x, gameBall.y, 0.0);
@@ -223,11 +240,6 @@ void onDisplay() {
     drawLives();
     
     glutSwapBuffers();
-}
-
-void timer(int i) {
-    onDisplay();
-    glutTimerFunc(30, timer, i);
 }
 
 void keyboard(unsigned char key, int x, int y) {
@@ -275,9 +287,16 @@ int main(int argc, char** argv) {
         gameBall.points[point].y = gameBall.radius * sin(drawAngle);
         drawAngle += angle;
     }
+
+    // register callbacks
+    glutDisplayFunc(displayGame);
+    //glutReshapeFunc(updateGame);
+    glutIdleFunc(updateGame);
+    //glutSpecialFunc(keyboard);
+    
+    //glutFullScreen();
     
     if(init_resources() == 1) {
-        timer(0);
         glutMainLoop();
     }
     
