@@ -1,5 +1,5 @@
 LDLIBS=-lglut  -lGLEW -lGL -lm
-all: bingbong
+all: hittheball
 clean:
-	rm -f *.o bingbong
+	rm -f *.o hittheball
 .PHONY: all clean
