@@ -257,7 +257,7 @@ int main(int argc, char** argv) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGB|GLUT_DOUBLE);
     glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
-    glutCreateWindow("Ping Pong");
+    glutCreateWindow("Bing Bong");
     glutKeyboardFunc(keyboard);
             
     GLenum glew_status = glewInit();
